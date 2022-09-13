@@ -3,13 +3,14 @@
  * регистрацией пользователя из приложения
  * Имеет свойство URL, равное '/user'.
  * */
-class User {
+ class User {
+  static URL = '/user';
   /**
    * Устанавливает текущего пользователя в
    * локальном хранилище.
    * */
   static setCurrent(user) {
-
+    localStorage.user = JSON.stringify(user);
   }
 
   /**
@@ -17,7 +18,8 @@ class User {
    * пользователе из локального хранилища.
    * */
   static unsetCurrent() {
-
+    localStorage.removeItem('user');
+    delete localStorage.user;
   }
 
   /**
@@ -25,15 +27,32 @@ class User {
    * из локального хранилища
    * */
   static current() {
-
+    return localStorage.user;
   }
 
   /**
    * Получает информацию о текущем
    * авторизованном пользователе.
    * */
-  static fetch(callback) {
-
+  static fetch(callback) {    
+    createRequest({
+      url: this.URL + '/current',
+      method: 'GET',
+      responseType: 'json',
+      data: {},
+      callback: (err, response) => {
+        if (err === null) {
+          callback(response);
+          if (response.success) {
+            this.setCurrent(response.user);
+          } else {
+            this.unsetCurrent();
+          }
+        } else {
+          console.log(err);
+        }
+      }
+    })
   }
 
   /**
@@ -64,7 +83,20 @@ class User {
    * User.setCurrent.
    * */
   static register(data, callback) {
-
+    createRequest({
+      url: this.URL + '/register',
+      method: 'POST',
+      responseType: 'json',
+      data: data,
+      callback: (err, response) => {
+        if (err === null && response.success) {
+          this.setCurrent(response.user);
+          callback(err, response);
+        } else {
+          console.log(err);
+        }
+      }
+    })
   }
 
   /**
@@ -72,6 +104,19 @@ class User {
    * выхода необходимо вызвать метод User.unsetCurrent
    * */
   static logout(callback) {
-
+    createRequest({
+      url: this.URL + '/logout',
+      method: 'POST',
+      responseType: 'json',
+      data: {},
+      callback: (err, response) => {
+        if (err === null && response.success) {
+          this.unsetCurrent();
+          callback(response);
+        } else {
+          console.log(err);
+        }
+      }
+    })
   }
 }
