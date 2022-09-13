@@ -4,7 +4,7 @@
  * создания нового дохода или расхода
  * */
 
- class TransactionsWidget {
+class TransactionsWidget {
   /**
    * Устанавливает полученный элемент
    * в свойство element.

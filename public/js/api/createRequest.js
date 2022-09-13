@@ -2,7 +2,7 @@
  * Основная функция для совершения запросов
  * на сервер.
  * */
- const createRequest = (options = {}) => {
+const createRequest = (options = {}) => {
 	const xhr = new XMLHttpRequest();
 	xhr.onload = function() {
 		if (xhr.readyState === xhr.DONE && xhr.status === 200) {
